@@ -1,0 +1,25 @@
+1, send button 
+	html element = button
+	accisisng the button send = document.querySelector('button[aria-label="Send"]');
+	to click the element so as to send the message = document.querySelector('button[aria-label="Send"]').click(); 
+
+	document.querySelector('span[data-icon="wds-ic-send-filled"]').closest('button');
+
+	if that page doesnt contain the send button it will return null
+
+2, text area
+	html element 
+	
+	acssing the text area 
+		document.querySelector('div[data-testid="conversation-compose-box-input"][contenteditable="true"]')
+		or 
+		document.querySelector('div[data-testid="conversation-compose-box-input"])
+		or 
+		document.querySelector('div[role="textbox"][contenteditable="true"][aria-placeholder="Type a message"]')
+
+3, chat search box 
+	document.querySelector('input[aria-label="Search or start a new chat"]')
+	or 
+	document.querySelector('input[placeholder="Search or start a new chat"]')
+	or
+	document.querySelector('input[role="textbox"][aria-label="Search or start a new chat"]')
