@@ -1,0 +1,14 @@
+{
+    "manifest_version": 3,
+    "name": "WAB Ext",
+    "version": "1.0",
+    "description": "WhatsApp Web automation extension",
+    "permissions": [],
+    "content_scripts": [
+        {
+            "matches": ["https://web.whatsapp.com/*"],
+            "js": ["whatsapp.js", "background.js"],
+            "run_at": "document_idle"
+        }
+    ]
+}

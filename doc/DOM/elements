@@ -1,16 +1,12 @@
 1, send button 
-	html element = button
-	accisisng the button send = document.querySelector('button[aria-label="Send"]');
+	accessing the button send = document.querySelector('button[aria-label="Send"]');
 	to click the element so as to send the message = document.querySelector('button[aria-label="Send"]').click(); 
-
+	
+	or
 	document.querySelector('span[data-icon="wds-ic-send-filled"]').closest('button');
 
-	if that page doesnt contain the send button it will return null
-
-2, text area
-	html element 
-	
-	acssing the text area 
+2, text area	
+	acessing the text area 
 		document.querySelector('div[data-testid="conversation-compose-box-input"][contenteditable="true"]')
 		or 
 		document.querySelector('div[data-testid="conversation-compose-box-input"])

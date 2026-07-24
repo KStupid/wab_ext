@@ -1,0 +1,5 @@
+1, date= 24-07-26 (11.20pm - )
+	1.1) so now i get to how to enter in to a chat with out refreshing the whole chat by analsing a diff project that is similar to this 
+		" https://addons.mozilla.org/en-US/firefox/addon/whatsapp-message-sender/ " an extension 
+	
+	1.2) created a functions for opening te chat , text message clicking and writeing the messssage and fr clicking the send button 
