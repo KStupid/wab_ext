@@ -19,3 +19,12 @@
 	document.querySelector('input[placeholder="Search or start a new chat"]')
 	or
 	document.querySelector('input[role="textbox"][aria-label="Search or start a new chat"]')
+
+4, new chat button
+	document.querySelector('span[data-testid="new-chat-outline"]')?.closest('button') 
+        or
+	document.querySelector('span[data-icon="new-chat-outline"]')?.closest('button')
+
+5, entering the number in text area inside new chat button
+	document.querySelector('input[role="textbox"][aria-label="Search name or number"]')
+	

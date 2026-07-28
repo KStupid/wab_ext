@@ -1,0 +1,338 @@
+# WhatsApp Web DOM Automation Debug Report
+
+## Objective
+
+Automate WhatsApp Web to:
+
+1. Click **New Chat**
+2. Enter a phone number into **Search name or number**
+3. Press **Enter**
+4. Open the chat
+
+---
+
+# Progress
+
+## ✅ Step 1 — Locate the New Chat button
+
+### Selector Tested
+
+```javascript
+document.querySelector('span[data-testid="new-chat-outline"]')
+```
+
+Result:
+
+* Element found successfully.
+
+---
+
+## ✅ Step 2 — Click the New Chat button
+
+Methods tested
+
+```javascript
+document.querySelector('span[data-testid="new-chat-outline"]').click()
+```
+
+and
+
+```javascript
+document.querySelector('span[data-testid="new-chat-outline"]')
+    ?.closest('button')
+    .click();
+```
+
+Result:
+
+* New Chat panel opened successfully.
+* This confirms the selector is correct. 
+
+---
+
+# Step 3 — Locate the Search Box
+
+Selector used
+
+```javascript
+document.querySelector(
+    'input[role="textbox"][aria-label="Search name or number"]'
+)
+```
+
+Result
+
+* Input element found successfully. 
+
+---
+
+# Step 4 — Focus the Search Box
+
+Test
+
+```javascript
+input.focus();
+```
+
+Result
+
+* No errors.
+* Input receives focus.
+
+---
+
+# Step 5 — Enter Phone Number
+
+Method
+
+```javascript
+input.value = "9495342265";
+```
+
+Console Output
+
+```text
+9495342265
+```
+
+Result
+
+* JavaScript reports success.
+* `.value` changes successfully. 
+
+---
+
+# Step 6 — Simulate Enter Key
+
+Method
+
+```javascript
+input.dispatchEvent(
+    new KeyboardEvent("keydown", {
+        key: "Enter",
+        code: "Enter",
+        keyCode: 13,
+        which: 13,
+        bubbles: true
+    })
+);
+```
+
+Console Output
+
+```text
+true
+```
+
+Result
+
+* Event dispatched.
+* Chat does not open. 
+
+---
+
+# Step 7 — Dispatch Input Event
+
+Method
+
+```javascript
+input.dispatchEvent(
+    new Event("input", {
+        bubbles: true
+    })
+);
+```
+
+Result
+
+* Event dispatched successfully.
+* Still no search performed. 
+
+---
+
+# Full Automation Script
+
+Created an automation script which
+
+* Clicks New Chat
+* Waits
+* Finds search box
+* Inserts number
+* Dispatches events
+* Presses Enter
+
+Console output
+
+```
+🔄 Starting automation...
+✅ Clicked New Chat button.
+✅ Inputted value: 9495342265
+```
+
+No runtime JavaScript errors occurred. 
+
+---
+
+# Errors Encountered
+
+## 1. React ignores `.value`
+
+Although
+
+```javascript
+input.value = "9495342265";
+```
+
+returns
+
+```
+9495342265
+```
+
+WhatsApp UI does **not** perform a search.
+
+Reason:
+
+The DOM property changes, but the React application does not recognize the update.
+
+---
+
+## 2. Element becomes null
+
+Sometimes
+
+```javascript
+document.querySelector(...)
+```
+
+returns
+
+```
+null
+```
+
+Reason:
+
+WhatsApp replaces the search input with a new DOM node during UI updates. 
+
+---
+
+## 3. Enter key ignored
+
+KeyboardEvent
+
+```javascript
+dispatchEvent(new KeyboardEvent(...))
+```
+
+returns
+
+```
+true
+```
+
+but
+
+* no search starts
+* no chat opens
+
+Reason:
+
+The event is dispatched, but React does not treat it as genuine user input.
+
+---
+
+## 4. Variable redeclaration
+
+Error
+
+```text
+SyntaxError:
+redeclaration of const phoneNumber
+```
+
+Cause
+
+Running the same script multiple times without refreshing the page redeclares `const` variables. 
+
+---
+
+## 5. Typos during testing
+
+Examples
+
+```javascript
+.clic()
+```
+
+instead of
+
+```javascript
+.click()
+```
+
+and
+
+```javascript
+value()
+```
+
+instead of
+
+```javascript
+.value
+```
+
+These produced expected JavaScript errors.  
+
+---
+
+# Browser Observations
+
+The console indicates the tests were run in **Firefox**, with repeated messages related to:
+
+* Fingerprinting Protection
+* Content Security Policy (CSP)
+* CORS telemetry requests
+* WebGL deprecation warnings
+
+These messages appear unrelated to the core automation issue but indicate Firefox-specific behavior during testing. 
+
+---
+
+# Root Cause Analysis
+
+The evidence collected suggests:
+
+1. ✅ DOM selectors are correct.
+2. ✅ New Chat button automation works.
+3. ✅ Search input is found.
+4. ✅ Focus works.
+5. ✅ JavaScript changes the input's `.value`.
+6. ✅ Keyboard events are dispatched.
+7. ❌ WhatsApp's React application does not recognize the programmatic value change.
+8. ❌ Therefore, pressing Enter searches for an empty value (or is ignored), and the chat does not open.
+
+---
+
+# Current Status
+
+| Task                   | Status    |
+| ---------------------- | --------- |
+| Find New Chat button   | ✅ Success |
+| Click New Chat         | ✅ Success |
+| Find Search Input      | ✅ Success |
+| Focus Search Input     | ✅ Success |
+| Set `.value`           | ✅ Success |
+| Dispatch `input` event | ✅ Success |
+| Dispatch Enter key     | ✅ Success |
+| Search by phone number | ❌ Failed  |
+| Open target chat       | ❌ Failed  |
+
+---
+
+# Recommended Next Steps
+
+1. Test the same automation in a Chromium-based browser (Chrome, Edge, or Brave) to determine whether the behavior is Firefox-specific.
+2. Instead of relying on `.value`, investigate simulating real typing (character-by-character keyboard events) or using a browser automation framework that can generate trusted input events.
+3. Consider bypassing the search dialog entirely by navigating directly to WhatsApp's supported URL format (for example, `https://web.whatsapp.com/send?phone=<number>`) if that fits the extension's workflow.
