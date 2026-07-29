@@ -1,0 +1,30 @@
+document.querySelector('span[data-testid="new-chat-outline"]')
+    ?.closest('button')
+    .click();
+    
+const inp = document.querySelector(
+    'input[aria-label="Search name or number"]'
+);
+
+inp.dispatchEvent(
+    new KeyboardEvent("keydown", {
+        key: " ",
+        code: "Space",
+        keyCode: 32,
+        which: 32,
+        bubbles: true
+    })
+);
+
+
+inp.value = "9495342265";
+
+inp.dispatchEvent(
+    new KeyboardEvent("keydown", {
+        key: "Enter",
+        code: "Enter",
+        keyCode: 13,
+        which: 13,
+        bubbles: true
+    })
+);
