@@ -28,3 +28,43 @@
 5, entering the number in text area inside new chat button
 	document.querySelector('input[role="textbox"][aria-label="Search name or number"]')
 	
+
+
+	yeahh fucking great 
+
+var inp = document.querySelector('input[aria-label="Search name or number"]');
+
+var props = inp[
+    Object.keys(inp).find(k => k.startsWith("__reactProps"))
+];
+
+var setter = Object.getOwnPropertyDescriptor(
+    HTMLInputElement.prototype,
+    "value"
+).set;
+
+setter.call(inp, "9495342265");
+
+props.onChange({
+    target: inp,
+    currentTarget: inp,
+    type: "change"
+});
+
+setTimeout(function () {
+    inp.dispatchEvent(new KeyboardEvent("keydown", {
+        key: "Enter",
+        code: "Enter",
+        keyCode: 13,
+        which: 13,
+        bubbles: true
+    }));
+
+    inp.dispatchEvent(new KeyboardEvent("keyup", {
+        key: "Enter",
+        code: "Enter",
+        keyCode: 13,
+        which: 13,
+        bubbles: true
+    }));
+}, 300);
