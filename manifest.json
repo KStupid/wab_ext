@@ -3,14 +3,14 @@
   "name": "WAB Ext",
   "version": "1.0",
   "description": "WhatsApp Web automation extension for accessibility",
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "storage"],
   "action": {
     "default_popup": "popup.html"
   },
   "content_scripts": [
     {
       "matches": ["https://web.whatsapp.com/*"],
-      "js": ["whatsapp.js", "content.js"],
+      "js": ["whatsapp.js"],
       "run_at": "document_idle"
     }
   ],
