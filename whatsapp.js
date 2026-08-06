@@ -123,6 +123,30 @@ async function sendMessage(composeBox) {
     return false;
 }
 
+async function handleWhatsAppBatchMessage({ phones, message }) {
+    const results = { sent: 0, failed: 0, failedNumbers: [] };
+    let i = 0;
+
+    while (i < phones.length) {
+        const phone = phones[i];
+        appendLog(`Batch: processing ${i + 1}/${phones.length} -> ${phone}`);
+
+        const result = await handleWhatsAppMessage({ phone, message });
+
+        if (result && result.success) {
+            results.sent += 1;
+        } else {
+            results.failed += 1;
+            results.failedNumbers.push(phone);
+        }
+
+        i += 1;
+    }
+
+    appendLog(`Batch done: sent=${results.sent}, failed=${results.failed}`);
+    return results;
+}
+
 async function handleWhatsAppMessage({ phone, message }) {
     appendLog(`Popup requested SEND_MESSAGE for ${phone}`);
 
@@ -151,6 +175,13 @@ async function handleWhatsAppMessage({ phone, message }) {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'SEND_MESSAGE_BATCH') {
+        handleWhatsAppBatchMessage(request).then((result) => {
+            sendResponse(result);
+        });
+        return true;
+    }
+
     if (request.action === 'SEND_MESSAGE') {
         handleWhatsAppMessage(request).then((result) => {
             sendResponse(result);
