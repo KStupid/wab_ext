@@ -1,0 +1,22 @@
+wab_ext
+    over all idea
+        1, this porject is build for blinds 
+        2, this project is a extension on fire fox +
+        3, this project background is based on the automation of the whatsapp thorugh dom 
+        4, this project is used to send one message to diff numbers if that is saved or not 
+
+    automation part(all r done using teh dom in whatsappweb)(every step is teken in the range of 20 to 30 seconds delay inorder to not to get the ban from whatsapp )
+        1, the new chat is opened by new chat option
+        2, then the number is enteered in teh text area 
+        3, then through the reactprobs the change state is invoked and tehn teh whatsapppweb kinda knows teh text elemsta i changed and then the number contact or chat of the number is searched there 
+        4, then the key is pressed here like the key is pressed down aand key up by using the react thing 
+        5, then the chat is opened and then the type the message in that area and then click send in button 
+
+    the input 
+        1, the number is inputted by the number seperated through ","
+        2, then teh message is typed there to send 
+        3, the send button is clicked 
+
+    the out put 
+        1, every time the aria element is updated like the thing 
+        2, after all the message the element is updated like all the message is sended 
