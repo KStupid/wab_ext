@@ -7,6 +7,14 @@
   "action": {
     "default_popup": "popup.html"
   },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+W"
+      },
+      "description": "Open the WhatsApp extension popup"
+    }
+  },
   "content_scripts": [
     {
       "matches": ["https://web.whatsapp.com/*"],
