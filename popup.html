@@ -8,20 +8,34 @@
 </head>
 
 <body>
-    <h1>Send WhatsApp Message</h1>
-    <button type="button" id="closeBtn" class="close-button">Close</button>
+    <!-- Main landmark for screen readers -->
+    <main role="main">
 
-    <label for="phone">Phone Numbers</label>
-    <input type="text" id="phone" value="9495342265" placeholder="e.g., 9495342265, 918888888888" aria-required="true">
-    <!-- <p style="margin-top:5px; font-size:12px; color:#666;">Separate numbers with commas. Example: 9495342265, 7736592394</p>
-    -->
-    <label for="message">Message:</label>
-    <textarea id="message" rows="4" placeholder="Type your message here..." aria-required="true">hello</textarea>
+        <!-- Header container for layout and accessibility -->
+        <div class="header-container">
+            <h1 id="popup-title">Send WhatsApp Message</h1>
+            <!-- Accessible Close Button with explicit label -->
+            <button type="button" id="closeBtn" class="close-button" aria-label="Close extension popup">Close</button>
+        </div>
 
-    <button id="sendBtn" class="send-button">Send Message</button>
+        <!-- Phone input group -->
+        <label for="phone" id="phone-label">Phone Numbers</label>
+        <input type="text" id="phone" value="9495342265" placeholder="e.g., 9495342265, 918888888888" aria-labelledby="phone-label" aria-describedby="phone-instructions" aria-required="true" required>
+        <!-- Accessible hidden instructions read aloud by screen readers when focusing phone field -->
+        <p id="phone-instructions" class="sr-only">Separate multiple phone numbers with commas.</p>
 
-    <p id="status" aria-live="polite"></p>
-    <script src="cbutton.js"></script>
+        <!-- Message input group -->
+        <label for="message" id="message-label">Message:</label>
+        <textarea id="message" rows="4" placeholder="Type your message here..." aria-labelledby="message-label" aria-required="true" required>hello</textarea>
+
+        <!-- Action button -->
+        <button id="sendBtn" class="send-button" type="button" aria-label="Send WhatsApp Message">Send Message</button>
+
+<!-- The live region MUST be present on load and strictly empty -->
+<div id="status-announcer" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></div>
+
+    </main>
+
     <script src="popup.js"></script>
 </body>
 
