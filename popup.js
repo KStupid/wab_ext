@@ -1,58 +1,90 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.getElementById('closeBtn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            window.close();
+        });
+    }
+
+    const sendBtn = document.getElementById('sendBtn');
+    if (sendBtn) {
+        sendBtn.addEventListener('click', sendMessageFromPopup);
+    }
+});
+
 function parsePhoneNumbers(input) {
     const normalized = input
         .split(',')
-        .map((item) => item.replace(/[^0-9]/g, '')) // Strip all non-digit characters
-        .filter((item) => item.length >= 7 && item.length <= 15); // Require valid length (7-15 digits)
+        .map((item) => item.replace(/[^0-9]/g, ''))
+        .filter((item) => item.length >= 7 && item.length <= 15);
         
     return [...new Set(normalized)];
 }
 
+function updateStatus(message, color = 'black') {
+    const announcerEl = document.getElementById('status-announcer');
+    if (!announcerEl) return;
+
+    // 1. Update visual styling and text
+    announcerEl.style.color = color;
+    announcerEl.textContent = message;
+
+    // 2. Force Firefox Gecko to dispatch an AT-SPI focus event to Orca
+    requestAnimationFrame(() => {
+        announcerEl.focus();
+    });
+}
+
 async function sendMessageFromPopup() {
-    const phones = parsePhoneNumbers(document.getElementById('phone').value);
-    const message = document.getElementById('message').value.trim();
-    const statusEl = document.getElementById('status');
+    // 1. Fetch values
+    const phoneInput = document.getElementById('phone');
+    const messageInput = document.getElementById('message');
 
+    if (!phoneInput || !messageInput) {
+        updateStatus('Error: Inputs missing from popup.', 'red');
+        return;
+    }
+
+    const phones = parsePhoneNumbers(phoneInput.value);
+    const message = messageInput.value.trim();
+
+    // 2. Validate inputs
     if (phones.length === 0 || !message) {
-        statusEl.textContent = 'Please enter at least one valid phone number (7-15 digits) and a message.';
-        statusEl.style.color = 'red';
+        updateStatus('Please enter at least one valid phone number (7-15 digits) and a message.', 'red');
         return;
     }
 
-    statusEl.textContent = `Sending ${phones.length} message(s)... Please wait.`;
-    statusEl.style.color = 'blue';
+    updateStatus(`Sending ${phones.length} message(s)... Please wait.`, 'blue');
 
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-    if (!tab?.url?.includes('web.whatsapp.com')) {
-        statusEl.textContent = 'Please open WhatsApp Web in the active tab first.';
-        statusEl.style.color = 'red';
-        return;
-    }
-
+    // 3. Safe Chrome API Execution
     try {
-        const response = await chrome.tabs.sendMessage(tab.id, {
+        const api = typeof browser !== 'undefined' ? browser : chrome;
+
+        const tabs = await api.tabs.query({ active: true, currentWindow: true });
+        const tab = tabs && tabs[0];
+
+        if (!tab?.url?.includes('web.whatsapp.com')) {
+            updateStatus('Please open WhatsApp Web in the active tab first.', 'red');
+            return;
+        }
+
+        const response = await api.tabs.sendMessage(tab.id, {
             action: 'SEND_MESSAGE_BATCH',
             phones: phones,
             message: message
         });
 
-        console.log('phones:', phones, 'message:', message, 'response:', response);
-
         if (response && response.sent > 0) {
             const failedText = response.failedNumbers && response.failedNumbers.length > 0
                 ? ` | Failed: ${response.failedNumbers.join(', ')}`
                 : '';
-            statusEl.textContent = `Sent ${response.sent} of ${phones.length}${failedText}`;
-            statusEl.style.color = response.failedNumbers && response.failedNumbers.length > 0 ? 'orange' : 'green';
+            const finalColor = response.failedNumbers && response.failedNumbers.length > 0 ? 'orange' : 'green';
+            updateStatus(`Sent ${response.sent} of ${phones.length}${failedText}`, finalColor);
         } else {
-            statusEl.textContent = 'Failed to send. Check console for details.';
-            statusEl.style.color = 'red';
+            updateStatus('Failed to send. Check WhatsApp Web tab.', 'red');
         }
     } catch (error) {
         console.error('Messaging failed:', error);
-        statusEl.textContent = 'Could not connect to WhatsApp tab. Refresh the tab and try again.';
-        statusEl.style.color = 'red';
+        updateStatus('Could not connect to WhatsApp tab. Refresh WhatsApp and try again.', 'red');
     }
 }
-
-document.getElementById('sendBtn').addEventListener('click', sendMessageFromPopup);
