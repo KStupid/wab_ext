@@ -3,6 +3,8 @@ async function openWhatsAppChat(phoneNumber) {
 
     // Combined selectors for new chat button from both scripts
     const newChatSelectors = [
+        'button[aria-label="New chat"]',
+        'button[data-tab="2"][aria-label="New chat"]',
         'span[data-testid="new-chat-outline"]',
         'span[data-icon="new-chat-outline"]',
         'div[title="New chat"]',
@@ -164,7 +166,11 @@ async function handleWhatsAppMessage({ phone, message }) {
         }
 
         // Re-query or pass compose box as fallback trigger for sendMessage
-        const composeBox = document.querySelector('div[contenteditable="true"]');
+        const composeBox = document.querySelector(
+            'div[data-testid="conversation-compose-box-input"][contenteditable="true"]'
+        ) || document.querySelector(
+            'div[contenteditable="true"][aria-placeholder*="Type a message"]'
+        );
         const sent = await sendMessage(composeBox);
         appendLog(`Final send result = ${sent}`);
         return { success: sent };
