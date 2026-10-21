@@ -1,14 +1,54 @@
 {
-    "manifest_version": 3,
-    "name": "WAB Ext",
-    "version": "1.0",
-    "description": "WhatsApp Web automation extension",
-    "permissions": [],
-    "content_scripts": [
-        {
-            "matches": ["https://web.whatsapp.com/*"],
-            "js": ["whatsapp.js", "background.js"],
-            "run_at": "document_idle"
-        }
-    ]
+  "manifest_version": 3,
+  "name": "WAB Ext",
+  "version": "1.0.0",
+  "description": "WhatsApp Web automation extension with smart update checking and storage management",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://web.whatsapp.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "WAB Ext - Send WhatsApp message (Alt+W)"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+W"
+      },
+      "description": "Open the WhatsApp extension popup"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://web.whatsapp.com/*"
+      ],
+      "js": [
+        "utils.js",
+        "whatsapp.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "wab-ext@local.dev",
+      "strict_min_version": "109.0"
+    }
+  }
 }
