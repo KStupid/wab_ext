@@ -1,42 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>WAB Ext</title>
     <link rel="stylesheet" href="popup.css">
 </head>
-
 <body>
-    <!-- Main landmark for screen readers -->
-    <main role="main">
-
-        <!-- Header container for layout and accessibility -->
+    <main>
         <div class="header-container">
             <h1 id="popup-title">Send WhatsApp Message</h1>
-            <!-- Accessible Close Button with explicit label -->
-            <button type="button" id="closeBtn" class="close-button" aria-label="Close extension popup">Close</button>
+            <button type="button" id="closeBtn" class="close-button">Close</button>
         </div>
+        <!--
+            LIVE REGIONS — Orca/Firefox compatibility notes:
+            - NO role="alert": Orca does not announce role=alert regions at all
+              (Roselli live-region testing, Jan 2026: Orca + Firefox).
+            - NO role="status": Firefox < 128 never announced role=status live
+              regions (Bugzilla 1810596, fixed in FF 128). Plain aria-live works
+              everywhere.
+            - NO aria-atomic="true": it breaks announcements in some Firefox +
+              screen reader combos (Bugzilla 1885011). Full-text replacement does
+              not need it.
+            - NOT display:none / hidden: hidden live regions never announce.
+            - Regions exist in static markup and start EMPTY (primed), so the
+              first text change is a real "change" event for AT.
+            Two polite regions alternate so an identical message repeated twice
+            in a row is still announced.
+        -->
+        <div id="status-announcer" aria-live="polite" tabindex="-1" class="sr-only"></div>
+        <div id="status-announcer-2" aria-live="polite" tabindex="-1" class="sr-only"></div>
+        <div id="error-announcer" aria-live="assertive" tabindex="-1" class="sr-only"></div>
 
-        <!-- Phone input group -->
         <label for="phone" id="phone-label">Phone Numbers</label>
-        <input type="text" id="phone" value="9495342265" placeholder="e.g., 9495342265, 918888888888" aria-labelledby="phone-label" aria-describedby="phone-instructions" aria-required="true" required>
-        <!-- Accessible hidden instructions read aloud by screen readers when focusing phone field -->
-        <p id="phone-instructions" class="sr-only">Separate multiple phone numbers with commas.</p>
+        <input type="text" id="phone" value="" placeholder="e.g., 9495342265, 918888888888" aria-describedby="phone-instructions form-error" required>
+        <p id="phone-instructions" class="sr-only">Enter one or more phone numbers, separated by commas. Press Ctrl+Enter to send.</p>
 
-        <!-- Message input group -->
         <label for="message" id="message-label">Message:</label>
-        <textarea id="message" rows="4" placeholder="Type your message here..." aria-labelledby="message-label" aria-required="true" required>hello</textarea>
+        <textarea id="message" rows="4" placeholder="Type your message here..." aria-describedby="form-error" required></textarea>
 
-        <!-- Action button -->
-        <button id="sendBtn" class="send-button" type="button" aria-label="Send WhatsApp Message">Send Message</button>
+        <!-- Persistent field-error text, read when focusing the inputs (aria-describedby) -->
+        <p id="form-error" class="sr-only"></p>
 
-<!-- The live region MUST be present on load and strictly empty -->
-<div id="status-announcer" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></div>
+        <button id="sendBtn" class="send-button" type="button">Send Message</button>
+        <button id="cancelBtn" class="cancel-button" type="button" hidden>Cancel Batch</button>
+        <p class="hint">Ctrl+Enter sends. You can close this window — reopen it any time to hear progress or the final result.</p>
 
+        <!-- Visible status for sighted users (hidden from AT to avoid double speech) -->
+        <div id="status" aria-hidden="true"></div>
     </main>
-
+    <script src="utils.js"></script>
     <script src="popup.js"></script>
 </body>
-
 </html>
